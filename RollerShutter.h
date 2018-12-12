@@ -16,14 +16,20 @@ class RollerShutter
   uint8_t CHILD_ID_COVER;
   uint8_t CHILD_ID_SET_UP;
   uint8_t CHILD_ID_SET_DOWN;
+  uint8_t CHILD_ID_INITIALIZATION;
   int buttonPinUp;
   int buttonPinDown;
   int relayPinUp;
   int relayPinDown;
+  uint8_t initialTimeUp;
+  uint8_t initialTimeDown;
   bool relayON;
   bool relayOFF;
 
+  bool setupMode = false;   // true = setup mode activated -> pass-through mode, Button write directly to relay.
+
   static bool initial_state_sent;
+  uint8_t checksum_initialization;      //store the checksum for the initialization
   int value = 0;
   int oldValueUp = 0;
   int oldValueDown = 0;
@@ -33,13 +39,13 @@ class RollerShutter
   Bounce debouncerStop = Bounce();
 
   
-  int rollTimeUp = loadState(CHILD_ID_SET_UP);
-  int rollTimeDown = loadState(CHILD_ID_SET_DOWN);
+  int rollTimeUp;
+  int rollTimeDown;
   
-  float timeOneLevelUp = rollTimeUp / 100.0;
-  float timeOneLevelDown = rollTimeDown / 100.0;
-  float requestedShutterLevel = 0;
-  float currentShutterLevel = 0;
+  float timeOneLevelUp;
+  float timeOneLevelDown;
+  float requestedShutterLevel;
+  float currentShutterLevel;
   bool currentShutterLevelChanged = false;
   unsigned long lastLevelTime = 0;
   bool isMoving = false;
@@ -47,7 +53,7 @@ class RollerShutter
   bool calibrateDown;
   bool calibrateUp;
   unsigned long calibrationStartTime;
-  float calibrationTime = 10.0;
+  float calibrationTime;
   bool calibratedDown;
   bool calibratedUp;
   int coverState = STOP;
@@ -55,24 +61,31 @@ class RollerShutter
   unsigned long relayDownOffTime = 0;
   
   public:
-  RollerShutter(int childId, int setIdUp, int setIdDown, int buttonUp, int buttonDown, int relayUp, int relayDown, int debaunceTime, bool invertedRelay) : 
+  RollerShutter(int childId, int setIdUp, int setIdDown, int initId,
+                int buttonUp, int buttonDown, int relayUp, int relayDown,   
+                uint8_t initTimeUp, uint8_t initTimeDown, uint8_t initCalibrationTime,
+                int debaunceTime, bool invertedRelay) : 
                                            msgUp(childId, V_UP),msgDown(childId, V_DOWN),
                                            msgStop(childId, V_STOP), msgPercentage(childId, V_PERCENTAGE), 
-                                           msgSetpointUp(setIdUp, V_HVAC_SETPOINT_HEAT), msgSetpointDown(setIdDown, V_HVAC_SETPOINT_HEAT),
+                                           msgSetpointUp(setIdUp, V_HVAC_SETPOINT_HEAT), msgSetpointDown(setIdDown, V_HVAC_SETPOINT_COOL),
                                            msgActualUp(setIdUp, V_TEMP), msgActualDown(setIdDown, V_TEMP)
   {
                                           // constructor - like "setup" part of standard program
     CHILD_ID_COVER = childId;
     CHILD_ID_SET_UP = setIdUp;
     CHILD_ID_SET_DOWN = setIdDown;
+    CHILD_ID_INITIALIZATION = initId;
     buttonPinUp = buttonUp;
     buttonPinDown = buttonDown;
     relayPinUp = relayUp;
     relayPinDown = relayDown;    
     relayON = !invertedRelay;
     relayOFF = invertedRelay;
-    pinMode(buttonPinUp, INPUT_PULLUP);     // Setup the button
-    pinMode(buttonPinDown, INPUT_PULLUP);   // Activate internal pull-up
+    initialTimeUp = initTimeUp;
+    initialTimeDown = initTimeDown;
+    calibrationTime = initCalibrationTime;
+    pinMode(buttonPinUp, INPUT_PULLUP);     // Setup the button and Activate internal pull-up
+    pinMode(buttonPinDown, INPUT_PULLUP);   // Setup the button and Activate internal pull-up
     debouncerUp.attach(buttonPinUp);        // After setting up the button, setup debouncer
     debouncerDown.attach(buttonPinDown);    // After setting up the button, setup debouncer
     debouncerUp.interval(debaunceTime);     // After setting up the button, setup debouncer
@@ -82,10 +95,23 @@ class RollerShutter
     pinMode(relayPinUp, OUTPUT);            // Then set relay pins in output mode
     pinMode(relayPinDown, OUTPUT);          // Then set relay pins in output mode
 
+    checksum_initialization = CHILD_ID_COVER + CHILD_ID_SET_UP + CHILD_ID_SET_DOWN + CHILD_ID_INITIALIZATION 
+                              + initialTimeUp + initialTimeDown + calibrationTime;
 
-    int state = loadState(CHILD_ID_COVER);
-    currentShutterLevel = state;
-    requestedShutterLevel = state;
+    if ( checksum_initialization != loadState(CHILD_ID_INITIALIZATION))    
+    {
+        saveState(CHILD_ID_SET_UP, initialTimeUp);
+        saveState(CHILD_ID_SET_DOWN, initialTimeDown);
+        saveState(CHILD_ID_INITIALIZATION, checksum_initialization);                  
+    }
+    
+    currentShutterLevel = loadState(CHILD_ID_COVER);
+    requestedShutterLevel = currentShutterLevel;
+
+    rollTimeUp = loadState(CHILD_ID_SET_UP);
+    rollTimeDown = loadState(CHILD_ID_SET_DOWN);
+    timeOneLevelUp = rollTimeUp / 100.0;
+    timeOneLevelDown = rollTimeDown / 100.0;
   }  
 
   MyMessage msgUp;
@@ -119,7 +145,7 @@ class RollerShutter
     send(msgActualUp.set((int)rollTimeUp));
     send(msgSetpointDown.set((int)rollTimeDown));
     send(msgActualDown.set((int)rollTimeDown));    
-  } 
+  }
   
   void shuttersUp(void) 
   {
@@ -322,12 +348,17 @@ class RollerShutter
     sendState();
   }
   
+  void SetupMode(bool active)
+  {
+    setupMode = active;
+  }  
+  
   void Present()
   {
     // Register all sensors to gw (they will be created as child devices)
      present(CHILD_ID_COVER, S_COVER, PRESENT_MESSAGE, IS_ACK);
-     present(CHILD_ID_SET_UP, S_HVAC);
-     present(CHILD_ID_SET_DOWN, S_HVAC);
+     present(CHILD_ID_SET_UP, S_HVAC, "");
+     present(CHILD_ID_SET_DOWN, S_HVAC, "");
   }
 
   void Receive(const MyMessage &message)
