@@ -64,7 +64,7 @@ void setup()
 void presentation()  
 {   
   // Send the sketch version information to the gateway and Controller
-  sendSketchInfo("Cover by Marek by Marek", "18.0");
+  sendSketchInfo("Cover by Marek", "20.0");
   for(int i = 0; i < blindsCount; i++)
   {
     blinds[i].Present(); 
