@@ -8,7 +8,7 @@ enum CoverState
 #define DIRECTION_DOWN 0
 #define STATE_UP 100              // 100 is opened - up
 #define STATE_DOWN 0              // 0 is closed - down
-#define PRESENT_MESSAGE "Roller Shutter for Domoticz"
+#define PRESENT_MESSAGE "Roller Shutter for HA/Domoticz"
 bool IS_ACK = false; //is to acknowlage
 
 class RollerShutter
