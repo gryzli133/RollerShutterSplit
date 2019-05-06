@@ -59,6 +59,7 @@ class RollerShutter
   int coverState = STOP;
   unsigned long relayUpOffTime = 0;
   unsigned long relayDownOffTime = 0;
+  bool serviceMode = 0;
   
   public:
   RollerShutter(int childId, int setIdUp, int setIdDown, int initId,
@@ -124,80 +125,92 @@ class RollerShutter
   MyMessage msgActualDown;  
   
   void sendState()                          // Send current state and status to gateway.
-  {  
-    if(currentShutterLevel==100)
+  {
+    if(serviceMode == 0)
     {
-      send(msgUp.set(1));
-    }
-    else 
-    {
-      if(currentShutterLevel==0)
+      if(currentShutterLevel==100)
       {
-        send(msgDown.set(1));
+        send(msgUp.set(1));
       }
-      else
+      else 
       {
-        send(msgStop.set(1));
+        if(currentShutterLevel==0)
+        {
+          send(msgDown.set(1));
+        }
+        else
+        {
+          send(msgStop.set(1));
+        }
       }
+      send(msgPercentage.set((int)currentShutterLevel));
+      send(msgSetpointUp.set((int)rollTimeUp));
+      send(msgActualUp.set((int)rollTimeUp));
+      send(msgSetpointDown.set((int)rollTimeDown));
+      send(msgActualDown.set((int)rollTimeDown));    
     }
-    send(msgPercentage.set((int)currentShutterLevel));
-    send(msgSetpointUp.set((int)rollTimeUp));
-    send(msgActualUp.set((int)rollTimeUp));
-    send(msgSetpointDown.set((int)rollTimeDown));
-    send(msgActualDown.set((int)rollTimeDown));    
   }
   
   void shuttersUp(void) 
   {
-    #ifdef MY_DEBUG
-      Serial.println("Shutters going up");
-    #endif
-    if (digitalRead(relayPinDown) == relayON) {
-      digitalWrite(relayPinDown, relayOFF);
-      wait(50);                             // NEED TO BE CHANGED !!!!!!!!!!!!
+    if(serviceMode == 0)
+    {
+      #ifdef MY_DEBUG
+        Serial.println("Shutters going up");
+      #endif
+      if (digitalRead(relayPinDown) == relayON) {
+        digitalWrite(relayPinDown, relayOFF);
+        wait(50);                             // NEED TO BE CHANGED !!!!!!!!!!!!
+      }
+      digitalWrite(relayPinUp, relayON);
+    
+      directionUpDown = DIRECTION_UP;
+      isMoving = true;
+      coverState = UP;
+      sendState();
     }
-    digitalWrite(relayPinUp, relayON);
-  
-    directionUpDown = DIRECTION_UP;
-    isMoving = true;
-    coverState = UP;
-    sendState();
   }
 
   void shuttersDown(void) 
   {
-    #ifdef MY_DEBUG
-      Serial.println("Shutters going down");
-    #endif
-    if (digitalRead(relayPinUp) == relayON) {
-      digitalWrite(relayPinUp, relayOFF);
-      wait(50);                             // NEED TO BE CHANGED !!!!!!!!!!!!
+    if(serviceMode == 0)
+    {    
+      #ifdef MY_DEBUG
+        Serial.println("Shutters going down");
+      #endif
+      if (digitalRead(relayPinUp) == relayON) {
+        digitalWrite(relayPinUp, relayOFF);
+        wait(50);                             // NEED TO BE CHANGED !!!!!!!!!!!!
+      }
+      digitalWrite(relayPinDown, relayON);
+    
+      directionUpDown = DIRECTION_DOWN;
+      isMoving = true;
+      coverState = DOWN;
+      sendState();
     }
-    digitalWrite(relayPinDown, relayON);
-  
-    directionUpDown = DIRECTION_DOWN;
-    isMoving = true;
-    coverState = DOWN;
-    sendState();
   }    
 
   void shuttersHalt(void) 
   {
-    #ifdef MY_DEBUG
-      Serial.println("Shutters halted");
-    #endif
-      digitalWrite(relayPinUp, relayOFF);
-      digitalWrite(relayPinDown, relayOFF);
-    
-      isMoving = false;
-      requestedShutterLevel = currentShutterLevel;
-    #ifdef MY_DEBUG
-      Serial.println("saving state to: ");
-      Serial.println(String(currentShutterLevel));
-    #endif
-      saveState(CHILD_ID_COVER, (int)currentShutterLevel);
-      coverState = STOP;
-      sendState();
+    if(serviceMode == 0)
+    {        
+      #ifdef MY_DEBUG
+        Serial.println("Shutters halted");
+      #endif
+        digitalWrite(relayPinUp, relayOFF);
+        digitalWrite(relayPinDown, relayOFF);
+      
+        isMoving = false;
+        requestedShutterLevel = currentShutterLevel;
+      #ifdef MY_DEBUG
+        Serial.println("saving state to: ");
+        Serial.println(String(currentShutterLevel));
+      #endif
+        saveState(CHILD_ID_COVER, (int)currentShutterLevel);
+        coverState = STOP;
+        sendState();
+    }
   }
     
   void changeShuttersLevel(int level) 
@@ -209,8 +222,15 @@ class RollerShutter
       requestedShutterLevel = level;
   }
 
+  void enterServiceMode()
+  {
+      serviceMode = 1;
+  }
+
   void Update()
   {
+    if(serviceMode == 0)
+    {
       debouncerUp.update();
       value = debouncerUp.read();
       if (value == 0 && value != oldValueUp) {
@@ -340,6 +360,12 @@ class RollerShutter
           lastLevelTime = millis();
         }
       }
+    }
+    else // Service Mode Aktive = input signal connected directly to output !!!
+    {
+      digitalWrite(relayPinUp, !digitalRead(buttonPinUp));
+      digitalWrite(relayPinDown, !digitalRead(buttonPinDown));
+    }
   }         
   
 
@@ -357,8 +383,8 @@ class RollerShutter
   {
     // Register all sensors to gw (they will be created as child devices)
      present(CHILD_ID_COVER, S_COVER, PRESENT_MESSAGE, IS_ACK);
-     present(CHILD_ID_SET_UP, S_HVAC, "");
-     present(CHILD_ID_SET_DOWN, S_HVAC, "");
+     present(CHILD_ID_SET_UP, S_HVAC, "TIME UP");
+     present(CHILD_ID_SET_DOWN, S_HVAC, "TIME DOWN");
   }
 
   void Receive(const MyMessage &message)
