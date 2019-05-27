@@ -49,14 +49,14 @@ int serviceLedPin = 13; // built-in LED
 
 RollerShutter blinds[] =
 {
-  {1, 21, 41, 61, 22, 23, 38, 39, 17, 17, 5, 50, 0},
-  {2, 22, 42, 62, 24, 25, 40, 41, 28, 28, 5, 50, 0},
-  {3, 23, 43, 63, 26, 27, 42, 43, 28, 28, 5, 50, 0},
-  {4, 24, 44, 64, 28, 29, 44, 45, 28, 28, 5, 50, 0},
-  {5, 25, 45, 65, 30, 31, 46, 47, 17, 17, 5, 50, 0},
-  {6, 26, 46, 66, 32, 33, 48, 49, 17, 17, 5, 50, 0},
-  {7, 27, 47, 67, 34, 35, 50, 51, 17, 17, 5, 50, 0},
-  {8, 28, 48, 68, 36, 37, 52, 53, 17, 17, 5, 50, 0}
+  {1, 21, 41, 61, 22, 23, 38, 39, 17, 17, 5, 50, 0, "Roleta Kuchnia 1"},
+  {2, 22, 42, 62, 24, 25, 40, 41, 28, 28, 5, 50, 0, "Roleta Kuchnia 2"},
+  {3, 23, 43, 63, 26, 27, 42, 43, 28, 28, 5, 50, 0, "Roleta Wykusz"},
+  {4, 24, 44, 64, 28, 29, 44, 45, 28, 28, 5, 50, 0, "Roleta Salon"},
+  {5, 25, 45, 65, 30, 31, 46, 47, 17, 17, 5, 50, 0, "Roleta Mały Pokój"},
+  {6, 26, 46, 66, 32, 33, 48, 49, 17, 17, 5, 50, 0, "Roleta Pokój Kinga},
+  {7, 27, 47, 67, 34, 35, 50, 51, 17, 17, 5, 50, 0, "Roleta Pokój Jaś"},
+  {8, 28, 48, 68, 36, 37, 52, 53, 17, 17, 5, 50, 0, "Roleta Gabinet}
 };
 
 const int blindsCount = sizeof(blinds) / sizeof(RollerShutter);
@@ -84,7 +84,7 @@ void setup()
 void presentation()  
 {   
   // Send the sketch version information to the gateway and Controller
-  sendSketchInfo("Blinds by Marek", "22.0");
+  sendSketchInfo("Blinds by Marek", "23.0");
   for(int i = 0; i < blindsCount; i++)
   {
     blinds[i].Present(); 
