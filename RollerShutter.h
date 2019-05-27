@@ -25,6 +25,7 @@ class RollerShutter
   uint8_t initialTimeDown;
   bool relayON;
   bool relayOFF;
+  const char * relayDescription;
 
   bool setupMode = false;   // true = setup mode activated -> pass-through mode, Button write directly to relay.
 
@@ -65,7 +66,7 @@ class RollerShutter
   RollerShutter(int childId, int setIdUp, int setIdDown, int initId,
                 int buttonUp, int buttonDown, int relayUp, int relayDown,   
                 uint8_t initTimeUp, uint8_t initTimeDown, uint8_t initCalibrationTime,
-                int debaunceTime, bool invertedRelay) : 
+                int debaunceTime, bool invertedRelay, const char *descr) : 
                                            msgUp(childId, V_UP),msgDown(childId, V_DOWN),
                                            msgStop(childId, V_STOP), msgPercentage(childId, V_PERCENTAGE), 
                                            msgSetpointUp(setIdUp, V_HVAC_SETPOINT_HEAT), msgSetpointDown(setIdDown, V_HVAC_SETPOINT_COOL),
@@ -95,6 +96,7 @@ class RollerShutter
     digitalWrite(relayPinDown, relayOFF);   // Make sure relays are off when starting up
     pinMode(relayPinUp, OUTPUT);            // Then set relay pins in output mode
     pinMode(relayPinDown, OUTPUT);          // Then set relay pins in output mode
+    relayDescription = descr;
 
     checksum_initialization = CHILD_ID_COVER + CHILD_ID_SET_UP + CHILD_ID_SET_DOWN + CHILD_ID_INITIALIZATION 
                               + initialTimeUp + initialTimeDown + calibrationTime;
