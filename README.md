@@ -31,5 +31,5 @@ The values are representing:
 10. Time in second for Blind to go full DOWN from top position
 11. Calibration time - this time is defining how long the relay is going to be ON after the Blind reach the UP or DOWN position - there are some situation, when the Blinds cannot reach the end position (f.e.: Time is set too short, Power supply is missing while Arduino is working etc). In most cases the best possibility is to set it to te bigger value of UP/DOWN time preset.
 12. Debounce time - if you don't know what it is, just set it to 50 ms
-13. It defines what state of the output the relays need. High Level Trigger = 0; Low level Trigger = 1
+13. It defines what state of the output the relays needs to switch ON. High Level Trigger = 0; Low level Trigger = 1
 14. Description - your blind will show this description to your controller
