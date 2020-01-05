@@ -6,6 +6,8 @@ To Use the code:
 - download newest .ino file and all other files to one folder - same name as newest .ino file
 - change the declaration in .ino file, for example:
 
+
+
 {1, 21, 41, 61, 22, 23, 38, 39, 21, 20, 21, 50, 0, "Roleta w kuchni"},
 
 {2, 22, 42, 62, 24, 25, 40, 41, 30, 29, 30, 50, 0, "Roleta w kuchni"},
@@ -25,6 +27,8 @@ To Use the code:
 {9, 29, 49, 69, A0, A1, A8, A9, 19, 18, 19, 50, 0, "Roleta Garaż 1"},
 
 {10, 30, 50, 70, A2, A3, A10, A11, 19, 18, 19, 50, 0, "Roleta Garaż 2"}
+
+
 
 
 
