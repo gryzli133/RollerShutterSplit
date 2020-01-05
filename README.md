@@ -17,7 +17,6 @@ To Use the code:
 {9, 29, 49, 69, A0, A1, A8, A9, 19, 18, 19, 50, 0, "Roleta Garaż 1"},
 {10, 30, 50, 70, A2, A3, A10, A11, 19, 18, 19, 50, 0, "Roleta Garaż 2"}
 
-// SwitchRelay(int childId, int setIdUp, int setIdDown, int initId, int buttonUp, int buttonDown, int relayUp, int relayDown, uint8_t initTimeUp, uint8_t initTimeDown, uint8_t initCalibrationTime, int debaunceTime, bool invertedRelay, char descirption)
 
 The values are representing:
 1. Child ID of your Blind/Roller Shutter (Controller like Domoticz, Home Assistant will show this as device number)
