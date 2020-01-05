@@ -8,7 +8,9 @@ enum CoverState
 #define DIRECTION_DOWN 0
 #define STATE_UP 100              // 100 is opened - up
 #define STATE_DOWN 0              // 0 is closed - down
-#define PRESENT_MESSAGE "Roller Shutter for Domoticz"
+#define MIN_SYNC 2000        // Send data to controller not often than every 2s
+#define MAX_SYNC 1800000     // Refresh data to controller at least once every 30min
+
 bool IS_ACK = false; //is to acknowlage
 
 class RollerShutter
@@ -25,6 +27,9 @@ class RollerShutter
   uint8_t initialTimeDown;
   bool relayON;
   bool relayOFF;
+  const char * relayDescription;
+  uint32_t lastSync;
+  bool requestSync;
 
   bool setupMode = false;   // true = setup mode activated -> pass-through mode, Button write directly to relay.
 
@@ -65,7 +70,7 @@ class RollerShutter
   RollerShutter(int childId, int setIdUp, int setIdDown, int initId,
                 int buttonUp, int buttonDown, int relayUp, int relayDown,   
                 uint8_t initTimeUp, uint8_t initTimeDown, uint8_t initCalibrationTime,
-                int debaunceTime, bool invertedRelay) : 
+                int debaunceTime, bool invertedRelay, const char *descr) : 
                                            msgUp(childId, V_UP),msgDown(childId, V_DOWN),
                                            msgStop(childId, V_STOP), msgPercentage(childId, V_PERCENTAGE), 
                                            msgSetpointUp(setIdUp, V_HVAC_SETPOINT_HEAT), msgSetpointDown(setIdDown, V_HVAC_SETPOINT_COOL),
@@ -85,6 +90,7 @@ class RollerShutter
     initialTimeUp = initTimeUp;
     initialTimeDown = initTimeDown;
     calibrationTime = initCalibrationTime;
+    relayDescription = descr;     
     pinMode(buttonPinUp, INPUT_PULLUP);     // Setup the button and Activate internal pull-up
     pinMode(buttonPinDown, INPUT_PULLUP);   // Setup the button and Activate internal pull-up
     debouncerUp.attach(buttonPinUp);        // After setting up the button, setup debouncer
@@ -94,7 +100,7 @@ class RollerShutter
     digitalWrite(relayPinUp, relayOFF);     // Make sure relays are off when starting up
     digitalWrite(relayPinDown, relayOFF);   // Make sure relays are off when starting up
     pinMode(relayPinUp, OUTPUT);            // Then set relay pins in output mode
-    pinMode(relayPinDown, OUTPUT);          // Then set relay pins in output mode
+    pinMode(relayPinDown, OUTPUT);          // Then set relay pins in output mode              
 
     checksum_initialization = CHILD_ID_COVER + CHILD_ID_SET_UP + CHILD_ID_SET_DOWN + CHILD_ID_INITIALIZATION 
                               + initialTimeUp + initialTimeDown + calibrationTime;
@@ -148,6 +154,8 @@ class RollerShutter
       send(msgActualUp.set((int)rollTimeUp));
       send(msgSetpointDown.set((int)rollTimeDown));
       send(msgActualDown.set((int)rollTimeDown));    
+      requestSync = false;
+      lastSync = millis();
     }
   }
   
@@ -167,7 +175,7 @@ class RollerShutter
       directionUpDown = DIRECTION_UP;
       isMoving = true;
       coverState = UP;
-      sendState();
+      requestSync = true;
     }
   }
 
@@ -187,7 +195,7 @@ class RollerShutter
       directionUpDown = DIRECTION_DOWN;
       isMoving = true;
       coverState = DOWN;
-      sendState();
+      requestSync = true;
     }
   }    
 
@@ -209,12 +217,16 @@ class RollerShutter
       #endif
         saveState(CHILD_ID_COVER, (int)currentShutterLevel);
         coverState = STOP;
-        sendState();
+        requestSync = true;
     }
   }
     
   void changeShuttersLevel(int level) 
   {
+      calibrateUp = false;
+      calibratedUp = false;
+      calibrateDown = false;
+      calibratedDown = false;      
       int dir = (level > currentShutterLevel) ? DIRECTION_UP : DIRECTION_DOWN;
       if (isMoving && dir != directionUpDown) {
         shuttersHalt();
@@ -299,7 +311,8 @@ class RollerShutter
           Serial.println(String(currentShutterLevel));
           #endif
           lastLevelTime = millis();
-          send(msgPercentage.set((int)currentShutterLevel));
+          requestSync = true;
+          //send(msgPercentage.set((int)currentShutterLevel));
         }
         if (currentShutterLevel == requestedShutterLevel) 
         {
@@ -360,6 +373,10 @@ class RollerShutter
           lastLevelTime = millis();
         }
       }
+      if((requestSync && millis() - lastSync > MIN_SYNC) || millis() - lastSync > MAX_SYNC)
+      {
+        sendState();
+      }
     }
     else // Service Mode Aktive = input signal connected directly to output !!!
     {
@@ -371,7 +388,7 @@ class RollerShutter
 
   void SyncController()
   {
-    sendState();
+    requestSync = true;
   }
   
   void SetupMode(bool active)
@@ -382,7 +399,7 @@ class RollerShutter
   void Present()
   {
     // Register all sensors to gw (they will be created as child devices)
-     present(CHILD_ID_COVER, S_COVER, PRESENT_MESSAGE, IS_ACK);
+     present(CHILD_ID_COVER, S_COVER, relayDescription, IS_ACK);
      present(CHILD_ID_SET_UP, S_HVAC, "TIME UP");
      present(CHILD_ID_SET_DOWN, S_HVAC, "TIME DOWN");
   }
@@ -443,7 +460,7 @@ class RollerShutter
           Serial.println(String(rollTimeUp));
           #endif
           saveState(CHILD_ID_SET_UP, rollTimeUp);
-          sendState();
+          requestSync = true;
           timeOneLevelUp = rollTimeUp / 100.0;
         }
     }
@@ -461,7 +478,7 @@ class RollerShutter
           Serial.println(String(rollTimeDown));
           #endif
           saveState(CHILD_ID_SET_DOWN, rollTimeDown);
-          sendState();
+          requestSync = true;
           timeOneLevelDown = rollTimeDown / 100.0;
         }
       }      
