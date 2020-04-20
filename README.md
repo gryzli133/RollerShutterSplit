@@ -15,14 +15,23 @@ To Use the code:
 
 
 {1, 21, 41, 61, 22, 23, MP_PIN_NONE, 38, 39, 21, 20, 21, 50, 0, "Roleta w kuchni"},
+
 {2, 22, 42, 62, 24, 25, MP_PIN_NONE, 40, 41, 30, 29, 30, 50, 0, "Roleta w kuchni w oknie otwieranym"},
+
 {3, 23, 43, 63, 26, 27, MP_PIN_NONE, 42, 43, 30, 29, 30, 50, 0, "Roleta HS lewa"},
+
 {4, 24, 44, 64, 28, 29, MP_PIN_NONE, 44, 45, 30, 29, 30, 50, 0, "Roleta HS prawa"},
+
 {5, 25, 45, 65, 30, 31, MP_PIN_NONE, 46, 47, 31, 30, 31, 50, 0, "Roleta FIX"},
+
 {6, 26, 46, 66, 32, 33, MP_PIN_NONE, 48, 49, 20, 19, 20, 50, 0, "Roleta gabinet"},
+
 {7, 27, 47, 67, 34, 35, MP_PIN_NONE, 50, 51, 17, 16, 17, 50, 0, "Roleta WC parter"},
+
 {8, 28, 48, 68, 36, 37, MP_PIN_NONE, 52, 53, 17, 16, 17, 50, 0, "Roleta w łazince na dole"},
+
 {9, 29, 49, 69, A0, A1, MP_PIN_NONE, A8, A9, 19, 18, 19, 50, 0, "Roleta garaż lewa"},
+
 {10, 30, 50, 70, A2, A3, MP_PIN_NONE, A10, A11, 19, 18, 19, 50, 0, "Roleta garaż prawa"}
 
 
