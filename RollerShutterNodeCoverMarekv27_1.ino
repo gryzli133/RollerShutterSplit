@@ -108,7 +108,7 @@ void setup()
 void presentation()  
 {   
   // Send the sketch version information to the gateway and Controller
-  sendSketchInfo("RollerShutter_v24", "24.0");
+  sendSketchInfo("RollerShutter", "27.1");
   for(int i = 0; i < blindsCount; i++)
   {
     blinds[i].Present(); 
