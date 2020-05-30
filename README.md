@@ -1,5 +1,9 @@
 # RollerShutterSplit
+
 Roller Shutter code - multiple Files
+
+This library helps to add multiple smart Blinds to one Arduino board (preferably Arduino MEGA) by just adding one line of code per Blind. It is based on MySensors library. Tested with Domoticz, but also worked for Home Assistant (feedback from community).
+
 
 v27:
 - new logic for counting the position
