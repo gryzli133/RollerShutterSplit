@@ -119,7 +119,7 @@ class RollerShutter
     
     currentShutterLevel = loadState(CHILD_ID_COVER);
     requestShutterLevel = currentShutterLevel;
-    currentMsUp = 10 * currentShutterLevel * rollTimeUp;
+    currentMsUp = (uint32_t)10 * currentShutterLevel * rollTimeUp;
   }  
 
   MyMessage msgUp;
