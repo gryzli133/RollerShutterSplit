@@ -10,6 +10,9 @@ v27:
 - new feature Toggle Button (UP/STOP/DOWN/STOP/UP/...)
   - you can choose UP and DOWN buttons or Toggle button -> or if needed all of them ;-)
   - if you don't need a button then use MP_PIN_NONE instead
+  
+v27.2:
+ - issue with timers longer than 32s is now solved. The bilnds can now run up to 255s in each direction.
 
 
 To Use the code:
