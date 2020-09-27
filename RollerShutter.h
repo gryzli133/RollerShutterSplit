@@ -120,6 +120,19 @@ class RollerShutter
     currentShutterLevel = loadState(CHILD_ID_COVER);
     requestShutterLevel = currentShutterLevel;
     currentMsUp = (uint32_t)10 * currentShutterLevel * rollTimeUp;
+
+    #ifdef MP_DEBUG_SHUTTER
+    Serial.print("currentShutterLevel / requestShutterLevel / currentMsUp / rollTimeUp / rollTimeDown : ");
+    Serial.print(currentShutterLevel);
+    Serial.print(" / ");
+    Serial.print(requestShutterLevel);
+    Serial.print(" / ");
+    Serial.print(currentMsUp);
+    Serial.print(" / ");
+    Serial.print(rollTimeDown);
+    Serial.print(" / ");
+    Serial.println(rollTimeDown);
+    #endif
   }  
 
   MyMessage msgUp;
@@ -339,7 +352,7 @@ class RollerShutter
         }
         else if(currentMs >= 1000)
         {
-          currentMsUp = 1000 * rollTimeUp;
+          currentMsUp = (uint32_t)1000 * rollTimeUp;
           currentMsDown = 0;
         }
         #ifdef MP_DEBUG_SHUTTER
@@ -367,7 +380,7 @@ class RollerShutter
           Serial.print(" / ");
           Serial.println(currentMsDown);
           #endif
-          if(currentMs <= 0 - (1000*calibrationTime/rollTimeDown))
+          if(currentMs <= (uint32_t)0 - ((uint32_t)1000 * calibrationTime / rollTimeDown))
           {
             requestRelayState = 0;
             currentMsUp = 0;
@@ -386,10 +399,10 @@ class RollerShutter
           Serial.print(" / ");
           Serial.println(currentMsDown);
           #endif
-          if(currentMs >= 1000 + (1000*calibrationTime/rollTimeUp))
+          if(currentMs >= (uint32_t)1000 + ((uint32_t)1000 * calibrationTime / rollTimeUp))
           {
             requestRelayState = 0; 
-            currentMsUp = 1000 * rollTimeUp;
+            currentMsUp = (uint32_t)1000 * rollTimeUp;
             currentMsDown = 0; 
           }
         }
