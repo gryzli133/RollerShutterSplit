@@ -1,3 +1,13 @@
+/*
+v27:
+new logic for counting the position
+new feature Toggle Button (UP/STOP/DOWN/STOP/UP/...)
+you can choose UP and DOWN buttons or Toggle button -> or if needed all of them ;-)
+if you don't need a button then use MP_PIN_NONE instead
+v27.2: issue with timers longer than 32s is now solved. The bilnds can now run up to 255s in each direction.
+v27.3: issue with no calibration in direction DOWN is now solved. The bilnds will calibrate now in each direction.
+*/
+
 // 100% is opened - up
 // 0% is closed - down
 #define MP_MIN_SYNC 2000        // Send data to controller not often than every 2s
@@ -380,7 +390,7 @@ class RollerShutter
           Serial.print(" / ");
           Serial.println(currentMsDown);
           #endif
-          if(currentMs <= (uint32_t)0 - ((uint32_t)1000 * calibrationTime / rollTimeDown))
+          if(currentMs <= (int32_t)0 - ((int32_t)1000 * calibrationTime / rollTimeDown))
           {
             requestRelayState = 0;
             currentMsUp = 0;
@@ -399,7 +409,7 @@ class RollerShutter
           Serial.print(" / ");
           Serial.println(currentMsDown);
           #endif
-          if(currentMs >= (uint32_t)1000 + ((uint32_t)1000 * calibrationTime / rollTimeUp))
+          if(currentMs >= (int32_t)1000 + ((int32_t)1000 * calibrationTime / rollTimeUp))
           {
             requestRelayState = 0; 
             currentMsUp = (uint32_t)1000 * rollTimeUp;
