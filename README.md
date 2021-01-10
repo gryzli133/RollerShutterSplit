@@ -13,6 +13,9 @@ v27:
   
 v27.2:
  - issue with timers longer than 32s is now solved. The bilnds can now run up to 255s in each direction.
+ 
+ v27.3: 
+ - issue with no calibration in direction DOWN is now solved. The bilnds will calibrate now in each direction.
 
 
 To Use the code:
