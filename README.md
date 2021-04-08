@@ -20,6 +20,8 @@ v27.3:
 v28.0:
   - new logic for Send() according to new Home Assistant MySensors implementation
 
+--------------------------------------------------------------------------------------------
+
 To Use the code:
 - download newest .ino file and all other files to one folder - same name as newest .ino file
 - change the declaration in .ino file, for example:
