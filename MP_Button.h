@@ -1,5 +1,3 @@
-#ifndef MP_Button_h
-#define MP_Button_h
 class MP_Button
 {
   uint8_t buttonPin; 
@@ -66,19 +64,6 @@ class MP_Button
     }
     buttonReading = OFF;
     lastButtonReading = OFF;
-    buttonState = OFF;
-	#if defined(MP_DEBUG_BUTTON)
-	Serial.print("Buton Initialized; ");
-	Serial.print("buttonReading: ");
-	Serial.print(buttonReading);
-	Serial.print(", lastButtonReading: ");
-	Serial.print(lastButtonReading);
-	Serial.print(", buttonState: ");
-	Serial.print(buttonState);
-	Serial.print(", button: ");
-	if(ON) Serial.println(" buttonPin, INPUT");
-	else Serial.println(" buttonPin, INPUT_PULLUP");
-	#endif
   }
 
   void Update()
@@ -333,4 +318,3 @@ class MP_Button
   }  
 
 };
-#endif

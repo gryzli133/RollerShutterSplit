@@ -160,21 +160,33 @@ class RollerShutter
   {
     if(serviceMode == 0)
     {
-      if(currentShutterLevel == 100 && requestRelayState != 2)
+      if(requestRelayState == 1) // 0= request relay off; 1= request relay up; 2= request relay down;
       {
         send(msgUp.set(1));
+        send(msgDown.set(0));
+        send(msgStop.set(0));
       }
       else 
       {
-        if(currentShutterLevel == 0 && requestRelayState != 1)
+        if(requestRelayState == 2)
         {
+          send(msgUp.set(0));
           send(msgDown.set(1));
+          send(msgStop.set(0));
         }
         else
         {
           if(requestRelayState == 0)
           {
             send(msgStop.set(1));
+            if(currentShutterLevel == 100)
+            {
+              send(msgUp.set(1));
+            }
+            if(currentShutterLevel == 0)
+            {
+              send(msgDown.set(1));
+            }
           }
         }
       }
