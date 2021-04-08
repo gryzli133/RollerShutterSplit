@@ -6,17 +6,16 @@ This library helps to add multiple smart Blinds to one Arduino board (preferably
 
 
 v27:
-- new logic for counting the position
-- new feature Toggle Button (UP/STOP/DOWN/STOP/UP/...)
-  - you can choose UP and DOWN buttons or Toggle button -> or if needed all of them ;-)
-  - if you don't need a button then use MP_PIN_NONE instead
-  
+  - new logic for counting the position
+  - new feature Toggle Button (UP/STOP/DOWN/STOP/UP/...)
+      - you can choose UP and DOWN buttons or Toggle button -> or if needed all of them ;-)
+      - if you don't need a button then use MP_PIN_NONE instead
 v27.2:
- - issue with timers longer than 32s is now solved. The bilnds can now run up to 255s in each direction.
- 
- v27.3: 
- - issue with no calibration in direction DOWN is now solved. The bilnds will calibrate now in each direction.
-
+  - issue with timers longer than 32s is now solved. The bilnds can now run up to 255s in each direction.
+v27.3: 
+  - issue with no calibration in direction DOWN is now solved. The bilnds will calibrate now in each direction.
+v28.0:
+  - new logic for Send() according to new Home Assistant MySensors implementation
 
 To Use the code:
 - download newest .ino file and all other files to one folder - same name as newest .ino file
