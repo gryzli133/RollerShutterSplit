@@ -34,16 +34,16 @@ v28.0:
 #define MY_TRANSPORT_WAIT_READY_MS 1
 
 // uncomment if we want to manually assign an ID
-#define MY_NODE_ID 12
+//#define MY_NODE_ID 12
 
 
 // !!!! CHOOSE ONLY ONE !!!!
 
 //#include "ESPGateway.h" // for ESP8266 WiFi gateway -> set your WiFi in ESPGateway.h tab!
-//#include "SerialGateway.h" // for Serial gateway
+#include "SerialGateway.h" // for Serial gateway
 //#include "RF24Gateway.h" // for RF24 radio gateway
 //#include "MQTTGateway.h" // for MQTT Ethernet gateway
-#include "PJON.h" // for PJON wired gateway
+//#include "PJON.h" // for PJON wired gateway
 
 
 
@@ -137,7 +137,7 @@ void setup()
 void presentation()  
 {   
   // Send the sketch version information to the gateway and Controller
-  sendSketchInfo("MP_RollerShutter", "28.0");
+  sendSketchInfo("RollerShutter", "28.0");
   for(int i = 0; i < blindsCount; i++)
   {
     blinds[i].Present(); 
