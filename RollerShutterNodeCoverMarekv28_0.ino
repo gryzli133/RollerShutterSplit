@@ -31,7 +31,7 @@ v28.0:
 //#define MY_BAUD_RATE 9600
 //#define MY_BAUD_RATE 115200
 
-#define MY_TRANSPORT_WAIT_READY_MS 1
+#define MY_TRANSPORT_WAIT_READY_MS 10000
 
 // uncomment if we want to manually assign an ID
 //#define MY_NODE_ID 12
