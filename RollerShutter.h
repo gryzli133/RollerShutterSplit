@@ -130,6 +130,8 @@ class RollerShutter
     currentShutterLevel = loadState(CHILD_ID_COVER);
     requestShutterLevel = currentShutterLevel;
     currentMsUp = (uint32_t)10 * currentShutterLevel * rollTimeUp;
+                                             
+    directionUp = currentShutterLevel > 50;
 
     #ifdef MP_DEBUG_SHUTTER
     Serial.print("currentShutterLevel / requestShutterLevel / currentMsUp / rollTimeUp / rollTimeDown : ");
