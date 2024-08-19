@@ -84,29 +84,8 @@ uint32_t lastAllUp;
 // Enable thermostat object to change the time from Domoticz/HA
 //#define MP_BLINDS_TIME_THERMOSTAT
 
-RollerShutter blinds[] =
-{
-  //A12
-  {1, 21, 41, 61, 22, 23, MP_PIN_NONE, 38, 39, 30, 30, 30, 50, 0, "Screen w kuchni"},
-  {2, 22, 42, 62, 24, 25, MP_PIN_NONE, 40, 41, 30, 30, 30, 50, 0, "Screnn HS lewy"},
-  {3, 23, 43, 63, 26, 27, MP_PIN_NONE, 42, 43, 30, 30, 30, 50, 0, "Screnn HS prawy"},
-  {4, 24, 44, 64, 28, 29, MP_PIN_NONE, 44, 45, 30, 30, 30, 50, 0, "Screen FIX"},
-  {5, 25, 45, 65, 30, 31, MP_PIN_NONE, 46, 47, 30, 30, 30, 50, 0, "Screen 5"},
-  {6, 26, 46, 66, 32, 33, MP_PIN_NONE, 48, 49, 30, 30, 30, 50, 0, "Screen 6"},
-  {7, 27, 47, 67, 34, 35, MP_PIN_NONE, 50, 51, 30, 30, 30, 50, 0, "Screen 7"},
-  {8, 28, 48, 68, 36, 37, MP_PIN_NONE, 52, 53, 30, 30, 30, 50, 0, "Screen 8"},
-  {9, 29, 49, 69, A0, A1, MP_PIN_NONE, A8, A9, 30, 30, 30, 50, 0, "Screen 9"},
-  {10, 30, 50, 70, A2, A3, MP_PIN_NONE, A10, A11, 30, 30, 30, 50, 0, "Screen 10"}
-
-  //A41
-  /*{1, 21, 41, 61, 22, 23, MP_PIN_NONE, 38, 39, 21, 20, 21, 50, 0, "Roleta WC biuro"},
-  {2, 22, 42, 62, 24, 25, MP_PIN_NONE, 40, 41, 30, 29, 30, 50, 0, "Roleta socjalny"},
-  {3, 23, 43, 63, 26, 27, MP_PIN_NONE, 42, 43, 30, 29, 30, 50, 0, "Roleta lewa od górnej biuro"},
-  {4, 24, 44, 64, 28, 29, MP_PIN_NONE, 44, 45, 30, 29, 30, 50, 0, "Roleta prawa od górnej biuro"},
-  {5, 25, 45, 65, 30, 31, MP_PIN_NONE, 46, 47, 31, 30, 31, 50, 0, "Roleta lewa od bocznej biuro"},
-  {6, 26, 46, 66, 32, 33, MP_PIN_NONE, 48, 49, 20, 19, 20, 50, 0, "Roleta prawa od bocznej biuro"},
-  {7, 27, 47, 67, 34, 35, MP_PIN_NONE, 50, 51, 17, 16, 17, 50, 0, "Roleta okno balkonowe biuro"}*/
-};
+// load the blinds config
+#include "config.h";
 
 const int blindsCount = sizeof(blinds) / sizeof(RollerShutter);
 
