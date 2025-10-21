@@ -77,6 +77,14 @@ class RollerShutter
                                            #endif
   {
                                           // constructor - like "setup" part of standard program
+    relayPinUp = relayUp;
+    pinMode(relayPinUp, OUTPUT);            // Then set relay pins in output mode
+    digitalWrite(relayPinUp, relayOFF);     // Make sure relays are off when starting up
+
+    relayPinDown = relayDown;    
+    pinMode(relayPinDown, OUTPUT);          // Then set relay pins in output mode              
+    digitalWrite(relayPinDown, relayOFF);   // Make sure relays are off when starting up
+
     CHILD_ID_COVER = childId;
     CHILD_ID_SET_UP = setIdUp;
     CHILD_ID_SET_DOWN = setIdDown;
@@ -84,8 +92,6 @@ class RollerShutter
     buttonPinUp = buttonUp;
     buttonPinDown = buttonDown;
     buttonPinToggle = buttonToggle;
-    relayPinUp = relayUp;
-    relayPinDown = relayDown;    
     relayON = !invertedRelay;
     relayOFF = invertedRelay;
     initTimeUp = initTimeUp;
@@ -111,11 +117,6 @@ class RollerShutter
       debouncerToggle.attach(buttonPinToggle);    // After setting up the button, setup debouncer
       debouncerToggle.interval(debaunceTime);     // After setting up the button, setup debouncer
     }
-
-    digitalWrite(relayPinUp, relayOFF);     // Make sure relays are off when starting up
-    digitalWrite(relayPinDown, relayOFF);   // Make sure relays are off when starting up
-    pinMode(relayPinUp, OUTPUT);            // Then set relay pins in output mode
-    pinMode(relayPinDown, OUTPUT);          // Then set relay pins in output mode              
 
     if (CHILD_ID_COVER + CHILD_ID_SET_UP + CHILD_ID_SET_DOWN + CHILD_ID_INITIALIZATION + initTimeUp + initTimeDown + calibrationTime != loadState(CHILD_ID_INITIALIZATION))    
     {
